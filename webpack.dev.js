@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = merge(common, {
   mode: 'development',
@@ -19,6 +20,9 @@ module.exports = merge(common, {
       'process.env': {
         'NODE_ENV': JSON.stringify('development')
       }
+    }),
+    new HtmlWebpackPlugin({
+      template: 'src/index.html'
     })
   ]
 });

@@ -1,26 +1,22 @@
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   entry: {
     index: [path.resolve(__dirname, './src/index.ts')],
   },
-
   performance: {
     hints: false
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: 'src/index.html'
-    }),
-  ],
   resolve: {
     extensions: [".js", ".json", ".jsx", ".css", ".ts", ".tsx"],
     mainFiles: ['index'],
   },
+  plugins: [
+    new CleanWebpackPlugin(['lib']),
+  ],
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, './lib'),
     publicPath: '/',
     chunkFilename: '[name].js',
     filename: '[name].js'

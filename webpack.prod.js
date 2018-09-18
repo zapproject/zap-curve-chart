@@ -1,9 +1,17 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
+const path = require('path');
 
 module.exports = merge(common, {
   mode: 'production',
+  entry: {
+    index: [path.resolve(__dirname, './src/CurveChart.ts')],
+  },
+  output: {
+    library: 'ZapCurve',
+    libraryTarget: 'umd',
+  },
   optimization: {
     minimize: true
   },
