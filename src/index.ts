@@ -1,5 +1,7 @@
-import { CurveChart } from './CurveChart';
+import { CurveLineChart } from "./CurveLineChart";
+import { CurveDoughnutChart } from "./CurveDoughnutChart";
 
-const chart = new CurveChart(document.getElementById('chart') as HTMLCanvasElement);
-chart.draw([4,0,0,2,3,1000,3,0,0,2000000000000000000,2000], 0);
-
+export default {
+  CurveLineChart,
+  CurveDoughnutChart,
+};

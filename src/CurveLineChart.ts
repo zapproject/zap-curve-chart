@@ -1,13 +1,16 @@
 import Chart from 'chart.js';
 import { Curve } from '@zapjs/curve';
 
-export class CurveChart {
+export class CurveLineChart {
 
   private chart = null;
   private chartDatasets = [];
   private chartLabels = [];
+  private canvas = null;
 
-  constructor(private canvas: HTMLCanvasElement) {
+  constructor(container: HTMLElement) {
+    this.canvas = document.createElement('canvas');
+    container.appendChild(this.canvas);
     const initialize = Chart.controllers.line.prototype.initialize;
     Chart.controllers.line.prototype.initialize = function() {
       initialize.apply(this, arguments);

@@ -6,7 +6,7 @@ const path = require('path');
 module.exports = merge(common, {
   mode: 'production',
   entry: {
-    index: [path.resolve(__dirname, './src/CurveChart.ts')],
+    index: [path.resolve(__dirname, './src/index.ts')],
   },
   output: {
     library: 'ZapCurve',

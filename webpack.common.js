@@ -2,9 +2,6 @@ const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: {
-    index: [path.resolve(__dirname, './src/index.ts')],
-  },
   performance: {
     hints: false
   },
