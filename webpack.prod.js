@@ -11,6 +11,15 @@ module.exports = merge(common, {
   output: {
     library: 'ZapCurve',
     libraryTarget: 'umd',
+    umdNamedDefine: true
+  },
+  externals: {
+    'chart.js': {
+      commonjs: 'Chart',
+      commonjs2: 'Chart',
+      amd: 'Chart',
+      root: 'Chart'
+    },
   },
   optimization: {
     minimize: true

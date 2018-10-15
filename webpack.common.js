@@ -10,7 +10,7 @@ module.exports = {
     mainFiles: ['index'],
   },
   plugins: [
-    new CleanWebpackPlugin(['lib']),
+    new CleanWebpackPlugin(['lib'])
   ],
   output: {
     path: path.resolve(__dirname, './lib'),
