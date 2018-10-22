@@ -1,5 +1,6 @@
 import Chart from 'chart.js';
 import { Curve } from '@zapjs/curve';
+import { ChartOptions } from './CurveDoughnutChart';
 
 export class CurveLineChart {
 
@@ -8,8 +9,11 @@ export class CurveLineChart {
   private chartLabels = [];
   private canvas = null;
 
-  constructor(container: HTMLElement) {
+  constructor(container: HTMLElement, options: ChartOptions = {height: 150, width: 300}) {
     this.canvas = document.createElement('canvas');
+    if (options.hasOwnProperty('height')) this.canvas.style.height = options.height + 'px';
+    if (options.hasOwnProperty('width')) this.canvas.style.width = options.width + 'px';
+
     container.appendChild(this.canvas);
     const initialize = Chart.controllers.line.prototype.initialize;
     Chart.controllers.line.prototype.initialize = function() {
