@@ -5,9 +5,9 @@
     "outDir": "./lib",
     "sourceMap": true,
     "declaration": true,
-    "jsx": "react",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
+    "module": "commonjs",
     "experimentalDecorators": true,
     "target": "es6",
     "typeRoots": [

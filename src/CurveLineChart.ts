@@ -33,6 +33,11 @@ export class CurveLineChart {
     };
   }
 
+  public destroy() {
+    if (!this.chart) return;
+    this.chart.destroy();
+  }
+
   private getDataset(curveParams: number[], issuedDots: number): number[] {
     const curve = new Curve(curveParams);
     const dataset = [];

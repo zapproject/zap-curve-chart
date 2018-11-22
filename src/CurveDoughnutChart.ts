@@ -21,6 +21,11 @@ export class CurveDoughnutChart {
     this.makeHTML(container, options);
   }
 
+  public destroy() {
+    if (!this.chart) return;
+    this.chart.destroy();
+  }
+
   private makeHTML(container, options: ChartOptions) {
     this.canvas = document.createElement('canvas');
     if (options.hasOwnProperty('height')) this.canvas.style.height = options.height + 'px';
