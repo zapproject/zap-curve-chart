@@ -1,5 +1,5 @@
 import Chart from 'chart.js';
-import * as Curve from '@zapjs/curve';
+import { Curve } from '@zapjs/curve';
 import './curve-doughnut-chart.css';
 
 export interface ChartOptions {
@@ -50,7 +50,7 @@ export class CurveDoughnutChart {
   }
 
   public draw(curveParams: number[], issuedDots: number = 0, userDots: number) {
-    const curve = new Curve.Curve(curveParams);
+    const curve = new Curve(curveParams);
     const totalDots = curve.max;
     const dotPrice = curve.getPrice(issuedDots + 1);
     this.dotPriceContainer.textContent = dotPrice.toString();
