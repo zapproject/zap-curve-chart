@@ -20,6 +20,12 @@ module.exports = merge(common, {
       amd: 'Chart',
       root: 'Chart'
     },
+    '@zapjs/curve': {
+      commonjs: 'Curve',
+      commonjs2: 'Curve',
+      amd: 'Curve',
+      root: 'Curve'
+    },
   },
   optimization: {
     minimize: true
