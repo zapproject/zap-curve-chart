@@ -18,6 +18,14 @@ module.exports = merge(common, {
   optimization: {
     minimize: false
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
+      }
+    ],
+  },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
