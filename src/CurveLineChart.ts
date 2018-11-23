@@ -1,6 +1,7 @@
 import * as Chart from 'chart.js';
 import { Curve } from '@zapjs/curve';
 import { ChartOptions } from './ChartOptions';
+import { reduce } from './utils';
 
 export class CurveLineChart {
 
@@ -42,26 +43,7 @@ export class CurveLineChart {
 
   private getDataset(curveParams: number[]): Array<{x: number; y: number}> {
     const curve = new Curve(curveParams);
-    const dots = [];
-    for (let i = 1; i < curve.max; i++) dots.push(i);
-    return CurveLineChart.reduce(dots, this.maxDots).map(x => ({x, y: curve.getPrice(x) / 1e18}));
-  }
-
-  private static reduce(data: any[], maxCount: number): any[] {
-    if (data.length <= maxCount) return data;
-    const blockSize = data.length / maxCount;
-    const reduced = [];
-    for (let i = 0; i < data.length;) {
-      const chunk = data.slice(i, (i += blockSize) + 1);
-      reduced.push(CurveLineChart.average(chunk));
-    }
-    return reduced;
-  }
-
-  private static average(chunk: number[]): number {
-    let x = 0;
-    for (let i = 0; i < chunk.length; i++) x += chunk[i];
-    return Math.round(x / chunk.length);
+    return reduce(curve.max, this.maxDots).map(x => ({x, y: curve.getPrice(x) / 1e18}));
   }
 
   public draw(curveParams: number[] = [], issuedDots: number = 0) {
