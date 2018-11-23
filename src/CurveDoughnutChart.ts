@@ -1,13 +1,10 @@
-import Chart from 'chart.js';
+import * as Chart from 'chart.js';
 import { Curve } from '@zapjs/curve';
 import './curve-doughnut-chart.css';
-
-export interface ChartOptions {
-  width?: number;
-  height?: number;
-}
+import { ChartOptions } from './ChartOptions';
 
 export class CurveDoughnutChart {
+
   private chart = null;
   private chartDatasets = [];
   private chartLabels = [];

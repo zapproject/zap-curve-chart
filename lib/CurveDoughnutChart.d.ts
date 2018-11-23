@@ -1,8 +1,5 @@
 import './curve-doughnut-chart.css';
-export interface ChartOptions {
-    width?: number;
-    height?: number;
-}
+import { ChartOptions } from './ChartOptions';
 export declare class CurveDoughnutChart {
     private chart;
     private chartDatasets;

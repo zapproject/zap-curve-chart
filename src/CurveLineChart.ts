@@ -1,6 +1,6 @@
-import Chart from 'chart.js';
+import * as Chart from 'chart.js';
 import { Curve } from '@zapjs/curve';
-import { ChartOptions } from './CurveDoughnutChart';
+import { ChartOptions } from './ChartOptions';
 
 export class CurveLineChart {
 
@@ -8,8 +8,10 @@ export class CurveLineChart {
   private chartDatasets = [];
   private chartLabels = [];
   private canvas = null;
+  private maxDots: number;
 
   constructor(container: HTMLElement, options: ChartOptions = {height: 150, width: 300}) {
+    this.maxDots = options.maxDots || 300;
     this.canvas = document.createElement('canvas');
     if (options.hasOwnProperty('height')) this.canvas.style.height = options.height + 'px';
     if (options.hasOwnProperty('width')) this.canvas.style.width = options.width + 'px';
@@ -38,34 +40,47 @@ export class CurveLineChart {
     this.chart.destroy();
   }
 
-  private getDataset(curveParams: number[], issuedDots: number): number[] {
+  private getDataset(curveParams: number[]): Array<{x: number; y: number}> {
     const curve = new Curve(curveParams);
-    const dataset = [];
-    const start = Math.max(issuedDots - 50, 1);
-    const end = Math.min(start + 100, curve.max);
-    for (let i = start; i < end; i++) {
-      dataset.push([i, curve.getPrice(i) / 1e18 ]);
+    const dots = [];
+    for (let i = 1; i < curve.max; i++) dots.push(i);
+    return CurveLineChart.reduce(dots, this.maxDots).map(x => ({x, y: curve.getPrice(x) / 1e18}));
+  }
+
+  private static reduce(data: any[], maxCount: number): any[] {
+    if (data.length <= maxCount) return data;
+    const blockSize = data.length / maxCount;
+    const reduced = [];
+    for (let i = 0; i < data.length;) {
+      const chunk = data.slice(i, (i += blockSize) + 1);
+      reduced.push(CurveLineChart.average(chunk));
     }
-    return dataset;
+    return reduced;
+  }
+
+  private static average(chunk: number[]): number {
+    let x = 0;
+    for (let i = 0; i < chunk.length; i++) x += chunk[i];
+    return Math.round(x / chunk.length);
   }
 
   public draw(curveParams: number[] = [], issuedDots: number = 0) {
-    const dataset = this.getDataset(curveParams, issuedDots);
-    this.chartLabels = dataset.map(x => x[0]);
+    const dataset = this.getDataset(curveParams);
+    this.chartLabels = dataset.map(data => data.x);
     const pointPersonalization = {
       pointRadius: [],
       pointBorderWidth: [],
       pointBackgroundColor: [],
       pointBorderColor: [],
     };
-    dataset.forEach((_, dotIndex) => {
-      const current = dotIndex === issuedDots;
+    dataset.forEach((data, index) => {
+      const current = !!dataset[index - 1] && dataset[index - 1].x < issuedDots && data.x >= issuedDots;
       pointPersonalization.pointRadius.push(current ? 5 : 0);
       pointPersonalization.pointBorderWidth.push(current ? 3 : 0);
     });
     this.chartDatasets = [{
       label: '',
-      data: dataset.map(x => x[1]),
+      data: dataset.map(data => data.y),
       fill: true,
       fillOpacity: 1,
       pointBackgroundColor: 'rgba(0,120,254,1)',
@@ -87,6 +102,11 @@ export class CurveLineChart {
     this.chart = new Chart(this.canvas.getContext('2d'), {
       type: 'line',
       options: {
+        elements: {
+          line: {
+            tension: 0, // disables bezier curves
+          }
+        },
         animation: {
           duration: 0
         },
