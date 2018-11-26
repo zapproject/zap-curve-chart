@@ -7,10 +7,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = merge(common, {
   mode: 'production',
   entry: {
-    index: [path.resolve(__dirname, './src/index.ts')],
+    'zap-curve-chart': [path.resolve(__dirname, './src/index.ts')],
   },
   output: {
-    library: 'ZapCurve',
+    filename: "[name].js",
+    library: 'ZapCurveChart',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
@@ -21,11 +22,11 @@ module.exports = merge(common, {
       amd: 'Chart',
       root: 'Chart'
     },
-    '@zapjs/curve': {
-      commonjs: 'Curve',
-      commonjs2: 'Curve',
-      amd: 'Curve',
-      root: 'Curve'
+    'bignumber.js': {
+      commonjs: 'BigNumber',
+      commonjs2: 'BigNumber',
+      amd: 'BigNumber',
+      root: 'BigNumber'
     },
   },
   optimization: {
