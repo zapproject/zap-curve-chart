@@ -25,9 +25,9 @@ export class CurveLineChart {
       const _stroke = ctx.stroke;
       ctx.stroke = function() {
         ctx.save();
-        ctx.shadowColor = '#07C';
-        ctx.shadowBlur = 10;
-        ctx.shadowRadius = 10;
+        ctx.shadowColor = 'black';
+        ctx.shadowBlur = 0;
+        ctx.shadowRadius = 1;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
         _stroke.apply(this, arguments);
@@ -57,7 +57,7 @@ export class CurveLineChart {
     };
     dataset.forEach((data, index) => {
       const current = !!dataset[index - 1] && dataset[index - 1].x < issuedDots && data.x >= issuedDots;
-      pointPersonalization.pointRadius.push(current ? 5 : 0);
+      pointPersonalization.pointRadius.push(current ? 3 : 0);
       pointPersonalization.pointBorderWidth.push(current ? 3 : 0);
     });
     this.chartDatasets = [{
@@ -65,11 +65,11 @@ export class CurveLineChart {
       data: dataset.map(data => data.y),
       fill: true,
       fillOpacity: 1,
-      pointBackgroundColor: 'rgba(0,120,254,1)',
-      pointBorderColor: 'rgba(0,120,254,1)',
+      pointBackgroundColor: 'black',
+      pointBorderColor:'black',
       pointStyle: 'circle',
-      borderColor: 'rgba(0,120,254,0.75)',
-      backgroundColor: 'rgba(0,120,254,0.5)',
+      borderColor: 'black',
+      backgroundColor: 'white',
       lineTension: 0.10,
       pointRadius: pointPersonalization.pointRadius,
       pointBorderWidth: pointPersonalization.pointBorderWidth,
