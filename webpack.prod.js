@@ -17,15 +17,15 @@ module.exports = merge(common, {
   },
   externals: {
     'chart.js': {
-      commonjs: 'Chart',
-      commonjs2: 'Chart',
-      amd: 'Chart',
+      commonjs: 'chart.js',
+      commonjs2: 'chart.js',
+      amd: 'chart.js',
       root: 'Chart'
     },
     'bignumber.js': {
-      commonjs: 'BigNumber',
-      commonjs2: 'BigNumber',
-      amd: 'BigNumber',
+      commonjs: 'bignumber.js',
+      commonjs2: 'bignumber.js',
+      amd: 'bignumber.js',
       root: 'BigNumber'
     },
   },
