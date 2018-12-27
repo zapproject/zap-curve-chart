@@ -3,7 +3,59 @@ import { Curve } from '@zapjs/curve';
 import { ChartOptions } from './ChartOptions';
 import { reduce } from './utils';
 
+interface CtxOptions {
+  shadowColor?: string;
+  shadowBlur?: number;
+  shadowRadius?: number;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
+}
+
+interface LineOptions {
+  fill?: boolean;
+  fillOpacity?: number;
+  pointStyle?: string;
+  borderColor?: string;
+  backgroundColor?: string;
+  lineTension?: number;
+  borderWidth?: number;
+  pointRadius?: number;
+  pointBorderWidth?: number;
+  pointBackgroundColor?: string;
+  pointBorderColor?: string;
+  currentPointRadius?: number;
+  currentPointBorderWidth?: number;
+  currentPointBackgroundColor?: string;
+  currentPointBorderColor?: string;
+}
+
 export class CurveLineChart {
+
+  private ctxOptions: CtxOptions = {
+    shadowColor: '#07c',
+    shadowBlur: 10,
+    shadowRadius: 10,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
+  }
+
+  private lineOptions: LineOptions = {
+    fill: true,
+    fillOpacity: 1,
+    pointStyle: 'circle',
+    borderColor: 'rgba(0,120,254,0.75)',
+    backgroundColor: 'rgba(0,120,254,0.5)',
+    lineTension: 0.10,
+    borderWidth: 2,
+    pointBackgroundColor: 'rgba(0,120,254,1)',
+    pointBorderColor: 'rgba(0,120,254,1)',
+    pointRadius: 0,
+    currentPointRadius: 5,
+    pointBorderWidth: 0,
+    currentPointBorderWidth: 3,
+    currentPointBackgroundColor: undefined,
+    currentPointBorderColor: undefined,
+  }
 
   private chart = null;
   private chartDatasets = [];
@@ -11,29 +63,16 @@ export class CurveLineChart {
   private canvas = null;
   private maxDots: number;
 
-  constructor(container: HTMLElement, options: ChartOptions = {height: 150, width: 300}) {
+  constructor(container: HTMLElement, options: ChartOptions = {height: 150, width: 300}, lineOptions: LineOptions = {}, ctxOptions: CtxOptions = {}) {
     this.maxDots = options.maxDots || 300;
     this.canvas = document.createElement('canvas');
     if (options.hasOwnProperty('height')) this.canvas.style.height = options.height + 'px';
     if (options.hasOwnProperty('width')) this.canvas.style.width = options.width + 'px';
 
+    this.ctxOptions = Object.assign(this.ctxOptions, ctxOptions);
+    this.lineOptions = Object.assign(this.lineOptions, lineOptions);
+
     container.appendChild(this.canvas);
-    const initialize = Chart.controllers.line.prototype.initialize;
-    Chart.controllers.line.prototype.initialize = function() {
-      initialize.apply(this, arguments);
-      const ctx = this.chart.chart.ctx;
-      const _stroke = ctx.stroke;
-      ctx.stroke = function() {
-        ctx.save();
-        ctx.shadowColor = '#07C';
-        ctx.shadowBlur = 10;
-        ctx.shadowRadius = 10;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-        _stroke.apply(this, arguments);
-        ctx.restore();
-      };
-    };
   }
 
   public destroy() {
@@ -52,31 +91,52 @@ export class CurveLineChart {
     const pointPersonalization = {
       pointRadius: [],
       pointBorderWidth: [],
-      pointBackgroundColor: [],
-      pointBorderColor: [],
     };
     dataset.forEach((data, index) => {
       const current = !!dataset[index - 1] && dataset[index - 1].x < issuedDots && data.x >= issuedDots;
-      pointPersonalization.pointRadius.push(current ? 5 : 0);
-      pointPersonalization.pointBorderWidth.push(current ? 3 : 0);
+      pointPersonalization.pointRadius.push(current ? this.lineOptions.currentPointRadius : this.lineOptions.pointRadius);
+      pointPersonalization.pointBorderWidth.push(current ? this.lineOptions.currentPointBorderWidth : this.lineOptions.pointBorderWidth);
     });
     this.chartDatasets = [{
       label: '',
       data: dataset.map(data => data.y),
-      fill: true,
-      fillOpacity: 1,
-      pointBackgroundColor: 'rgba(0,120,254,1)',
-      pointBorderColor: 'rgba(0,120,254,1)',
-      pointStyle: 'circle',
-      borderColor: 'rgba(0,120,254,0.75)',
-      backgroundColor: 'rgba(0,120,254,0.5)',
-      lineTension: 0.10,
+      fill: this.lineOptions.fill,
+      fillOpacity: this.lineOptions.fillOpacity,
+      pointBackgroundColor: this.lineOptions.pointBackgroundColor,
+      pointBorderColor: this.lineOptions.pointBorderColor,
+      pointStyle: this.lineOptions.pointStyle,
+      borderColor: this.lineOptions.borderColor,
+      backgroundColor: this.lineOptions.backgroundColor,
+      lineTension: this.lineOptions.lineTension,
       pointRadius: pointPersonalization.pointRadius,
       pointBorderWidth: pointPersonalization.pointBorderWidth,
-      borderWidth: 2,
+      borderWidth: this.lineOptions.borderWidth,
     }];
     if (!this.chart) this.renderChart();
     this.updateChart();
+  }
+
+  private initContext() {
+    const defaultCtxOptions = this.ctxOptions;
+    const initialize = Chart.controllers.line.prototype.initialize;
+    Chart.controllers.line.prototype.initialize = function() {
+      initialize.apply(this, arguments);
+      const ctx = this.chart.chart.ctx;
+      const _stroke = ctx.stroke;
+      ctx.stroke = function() {
+        ctx.save();
+        ctx.shadowColor = defaultCtxOptions.shadowColor;
+        ctx.shadowBlur = defaultCtxOptions.shadowBlur;
+        ctx.shadowRadius = defaultCtxOptions.shadowRadius;
+        ctx.shadowOffsetX = defaultCtxOptions.shadowOffsetX;
+        ctx.shadowOffsetY = defaultCtxOptions.shadowOffsetY;
+        _stroke.apply(this, arguments);
+        ctx.restore();
+      };
+    };
+    return () => {
+      Chart.controllers.line.prototype.initialize = initialize;
+    }
   }
 
   private renderChart() {
@@ -162,12 +222,13 @@ export class CurveLineChart {
     this.chart.data.labels = this.chartLabels;
 
     // Calculate the max manually
-    const maxY = Math.max(... this.chartDatasets[0].data) * 2;
+    const maxY = Math.max.apply(null, this.chartDatasets[0].data) * 2;
     this.chart.options.scales.yAxes[0].ticks.max = maxY;
 
-    const minX = Math.min(... this.chartLabels);
+    const minX = Math.min.apply(null, this.chartLabels);
     this.chart.options.scales.xAxes[0].ticks.min = minX;
-
+    const resetore = this.initContext();
     this.chart.update();
+    resetore();
   }
 }

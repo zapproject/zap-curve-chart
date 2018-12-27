@@ -1,11 +1,11 @@
 export function reduce(dots: number, maxCount: number): number[] {
+  const reduced = [];
   if (dots <= maxCount) {
-    const res = [];
-    for (let i = 1; i <= dots; i++) res.push(i);
-    return res;
+    for (let i = 1; i <= dots; i++) reduced.push(i);
+    return reduced;
   }
   const blockSize = dots / (maxCount - 2);
-  const reduced = [1];
+  reduced.push(1);
   reduced.push(average(1, blockSize));
   for (let i = blockSize, len = dots - blockSize; i < len;) {
     reduced.push(average(i, (i += blockSize)));
