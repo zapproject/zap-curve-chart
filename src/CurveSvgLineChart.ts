@@ -150,7 +150,7 @@ export class CurveSvgLineChart {
     this.textM.style.visibility = 'hidden';
   }
 
-  getFilter(id: string, offset: any) {
+  private getFilter(id: string, offset: any) {
     const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
     filter.setAttributeNS(null, 'x', '-40%');
     filter.setAttributeNS(null, 'y', '-40%');

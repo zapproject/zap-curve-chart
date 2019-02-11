@@ -25,6 +25,6 @@ export declare class CurveSvgLineChart {
     destroy(): void;
     private onMouseMove;
     private onMouseOut;
-    getFilter(id: string, offset: any): SVGFilterElement;
+    private getFilter;
     private getDataset;
 }

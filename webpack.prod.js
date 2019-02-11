@@ -8,6 +8,9 @@ module.exports = merge(common, {
   mode: 'production',
   entry: {
     'zap-curve-chart': [path.resolve(__dirname, './src/index.ts')],
+    'CurveSvgLineChart': [path.resolve(__dirname, './src/CurveSvgLineChart.ts')],
+    'CurveLineChart': [path.resolve(__dirname, './src/CurveLineChart.ts')],
+    'CurveDoughnutChart': [path.resolve(__dirname, './src/CurveDoughnutChart.ts')],
   },
   output: {
     filename: "[name].js",
