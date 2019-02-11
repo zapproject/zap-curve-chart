@@ -1,28 +1,4 @@
-import { ChartOptions } from './ChartOptions';
-interface CtxOptions {
-    shadowColor?: string;
-    shadowBlur?: number;
-    shadowRadius?: number;
-    shadowOffsetX?: number;
-    shadowOffsetY?: number;
-}
-interface LineOptions {
-    fill?: boolean;
-    fillOpacity?: number;
-    pointStyle?: string;
-    borderColor?: string;
-    backgroundColor?: string;
-    lineTension?: number;
-    borderWidth?: number;
-    pointRadius?: number;
-    pointBorderWidth?: number;
-    pointBackgroundColor?: string;
-    pointBorderColor?: string;
-    currentPointRadius?: number;
-    currentPointBorderWidth?: number;
-    currentPointBackgroundColor?: string;
-    currentPointBorderColor?: string;
-}
+import { CtxOptions, LineOptions, ChartOptions } from './types';
 export declare class CurveLineChart {
     private ctxOptions;
     private lineOptions;
@@ -39,4 +15,3 @@ export declare class CurveLineChart {
     private renderChart;
     private updateChart;
 }
-export {};

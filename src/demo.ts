@@ -1,10 +1,14 @@
 import { CurveLineChart } from "./CurveLineChart";
 import { CurveDoughnutChart } from "./CurveDoughnutChart";
+import { CurveSvgLineChart } from "./CurveSvgLineChart";
 
 const container = document.getElementById('charts');
 
 const lineChart = new CurveLineChart(container, {maxDots: 150});
 lineChart.draw([1, 6e18, 1000000000, 1, 3e18, 2000000000], 990000000);
+
+const svgChart = new CurveSvgLineChart(container);
+svgChart.draw([1, 6e18, 1000000000, 1, 3e18, 2000000000], 990000000);
 
 const lineChart2 = new CurveLineChart(
   container,
