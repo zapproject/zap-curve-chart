@@ -1,5 +1,5 @@
 import { Curve } from '@zapjs/curve';
-import { LineOptions, ChartOptions } from './types';
+import { LineOptions, ChartOptions, CtxOptions } from './types';
 import { reduce } from './utils';
 
 
@@ -27,36 +27,53 @@ export class CurveSvgLineChart {
     borderWidth: 2,
     borderColor: 'rgba(0,120,254,0.75)',
     backgroundColor: 'rgba(0,120,254,0.5)',
-    currentPointRadius: 7,
-    currentPointBackgroundColor: 'rgba(0,120,254,1)',
+    pointRadius: 7,
+    pointBackgroundColor: 'rgba(0,120,254,1)',
   }
 
-  private shadowRadius = "3";
+  private ctxOptions: CtxOptions = {
+    shadowBlur: 3,
+    shadowRadius: 3,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
+  }
+
+  private options: ChartOptions = {
+    height: 150,
+    width: 300,
+    maxDots: 300,
+  }
+
   private black = false;
 
-
-  constructor(private container: HTMLElement, private options: ChartOptions = {height: 150, width: 300}, lineOptions: LineOptions = {}) {
-    this.maxDots = options.maxDots || 300;
+  constructor(private container: HTMLElement, options: ChartOptions = {}, lineOptions: LineOptions = {}, ctxOptions: CtxOptions = {}) {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseOut = this.onMouseOut.bind(this);
+
     this.lineOptions = Object.assign(this.lineOptions, lineOptions);
+    this.options = Object.assign(this.options, options);
+    this.ctxOptions = Object.assign(this.ctxOptions, ctxOptions);
+
     this.coef = 1;
-    const { height, width } = options;
+    const { height, width } = this.options;
     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    this.svg.setAttributeNS(null, "viewBox", `0 -${height / 2} ${width} ${height}`);
+    this.svg.setAttributeNS(null, 'viewBox', `0 -${height / 2} ${width} ${height}`);
+    this.svg.setAttribute('width', width.toString());
+    this.svg.setAttribute('height', height.toString());
 
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    const filterCircle = this.getFilter('circleShadow', {x: "0", y: "0"});
-    defs.append(filterCircle);
-    const filterPolyline = this.getFilter('polylineShadow', {x: "0", y: "-1"});
-    defs.append(filterPolyline);
+    const shadowFilterId = Math.random() + 'shadow';
+    if (this.ctxOptions.shadowRadius) {
+      const shadow = this.getFilter(shadowFilterId);
+      defs.append(shadow);
+    }
     this.svg.append(defs);
 
     this.polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
     this.polyline.setAttributeNS(null, 'stroke', this.lineOptions.borderColor);
     this.polyline.setAttributeNS(null, 'fill', 'none');
     this.polyline.setAttributeNS(null, 'stroke-width', this.lineOptions.borderWidth.toString());
-    this.polyline.setAttributeNS(null, 'filter', 'url(#polylineShadow)');
+    if (this.ctxOptions.shadowRadius) this.polyline.setAttributeNS(null, 'filter', `url(#${shadowFilterId})`);
     this.fill = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
     this.fill.setAttributeNS(null, 'stroke', 'none');
     this.fill.setAttributeNS(null, 'fill', this.lineOptions.backgroundColor);
@@ -64,9 +81,9 @@ export class CurveSvgLineChart {
 
     this.gCircle = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     this.circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    this.circle.setAttributeNS(null, 'r', this.lineOptions.currentPointRadius.toString());
-    this.circle.setAttributeNS(null, 'fill', this.lineOptions.currentPointBackgroundColor);
-    this.circle.setAttributeNS(null, 'filter', 'url(#circleShadow)');
+    this.circle.setAttributeNS(null, 'r', this.lineOptions.pointRadius.toString());
+    this.circle.setAttributeNS(null, 'fill', this.lineOptions.pointBackgroundColor);
+    if (this.ctxOptions.shadowRadius) this.circle.setAttributeNS(null, 'filter', `url(#${shadowFilterId})`);
     this.gCircle.appendChild(this.circle);
 
     this.gText = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -77,15 +94,15 @@ export class CurveSvgLineChart {
     this.gText.setAttributeNS(null, 'fill', this.textColor);
     this.textM = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     this.textMDots = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-    this.textMDots.setAttributeNS(null, 'dy', "1em");
+    this.textMDots.setAttributeNS(null, 'dy', '1em');
     this.textMPrice = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-    this.textMPrice.setAttributeNS(null, 'dy', "1em");
+    this.textMPrice.setAttributeNS(null, 'dy', '1em');
     this.textM.appendChild(this.textMDots);
     this.textM.appendChild(this.textMPrice);
     this.textM.style.visibility = 'hidden';
     this.infoText = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    this.infoText.setAttributeNS(null, "ry", "5");
-    this.infoText.setAttributeNS(null, "rx", "5");
+    this.infoText.setAttributeNS(null, 'ry', '5');
+    this.infoText.setAttributeNS(null, 'rx', '5');
     this.infoText.setAttributeNS(null, 'fill', this.textBackground);
     this.gText.appendChild(this.textM);
 
@@ -94,9 +111,6 @@ export class CurveSvgLineChart {
     this.svg.appendChild(this.gCircle);
     this.svg.appendChild(this.infoText);
     this.svg.appendChild(this.gText);
-
-    this.svg.style.height = options.height + 'px';
-    this.svg.style.width = options.width + 'px';
 
     this.container.appendChild(this.svg);
     this.svg.addEventListener('mousemove', this.onMouseMove);
@@ -150,26 +164,27 @@ export class CurveSvgLineChart {
     this.textM.style.visibility = 'hidden';
   }
 
-  private getFilter(id: string, offset: any) {
+  private getFilter(id: string) {
     const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
     filter.setAttributeNS(null, 'x', '-40%');
     filter.setAttributeNS(null, 'y', '-40%');
     filter.setAttributeNS(null, 'width', '200%');
     filter.setAttributeNS(null, 'height', '200%');
     filter.setAttributeNS(null, 'id', id);
+    filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
     const feOffset = document.createElementNS('http://www.w3.org/2000/svg', 'feOffset');
-    feOffset.setAttributeNS(null, 'result', "offOut");
-    feOffset.setAttributeNS(null, 'in', this.black ? "SourceAlpha" : "SourceGraphic");
-    feOffset.setAttributeNS(null, 'dx', offset.x);
-    feOffset.setAttributeNS(null, 'dy', offset.y);
+    feOffset.setAttributeNS(null, 'result', 'offOut');
+    feOffset.setAttributeNS(null, 'in', this.black ? 'SourceAlpha' : 'SourceGraphic');
+    feOffset.setAttributeNS(null, 'dx', this.ctxOptions.shadowOffsetX.toString());
+    feOffset.setAttributeNS(null, 'dy', this.ctxOptions.shadowOffsetY.toString());
     const feGaussianBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-    feGaussianBlur.setAttributeNS(null, 'result', "blurOut");
-    feGaussianBlur.setAttributeNS(null, 'in', "offOut");
-    feGaussianBlur.setAttributeNS(null, 'stdDeviation', this.shadowRadius);
+    feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+    feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+    feGaussianBlur.setAttributeNS(null, 'stdDeviation', this.ctxOptions.shadowRadius.toString());
     const feBlend = document.createElementNS('http://www.w3.org/2000/svg', 'feBlend');
-    feBlend.setAttributeNS(null, 'in', "SourceGraphic");
-    feBlend.setAttributeNS(null, 'in2', "blurOut");
-    feBlend.setAttributeNS(null, 'mode', "normal");
+    feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+    feBlend.setAttributeNS(null, 'in2', 'blurOut');
+    feBlend.setAttributeNS(null, 'mode', 'normal');
     filter.appendChild(feOffset);
     filter.appendChild(feGaussianBlur);
     filter.appendChild(feBlend);
@@ -179,7 +194,7 @@ export class CurveSvgLineChart {
   private getDataset(curveParams: number[], dotsIssued: number = 0): any {
     const height = this.options.height / 2;
     const curve = new Curve(curveParams);
-    const reduced = reduce(curve.max, this.maxDots);
+    const reduced = reduce(curve.max, this.options.maxDots);
     let maxY = 0;
     let current = 1;
     reduced.forEach((item, i, arr) => {
@@ -192,7 +207,7 @@ export class CurveSvgLineChart {
       }
     });
     const coefY = maxY / height;
-    const coefX = this.maxDots / curve.max;
+    const coefX = this.options.maxDots / curve.max;
     const currentPos = {
       x: current * coefX,
       y: height - (curve.getPrice(current) / coefY)
@@ -203,7 +218,7 @@ export class CurveSvgLineChart {
       polyline.push(`${x * coefX},${height - (curve.getPrice(x) / coefY)}`);
       fill.push(`${x * coefX},${height - (curve.getPrice(x) / coefY)}`);
     });
-    fill.push(`${this.maxDots},${maxY/coefY}`)
+    fill.push(`${this.options.maxDots},${maxY/coefY}`)
     return {
       polyline: polyline.join(' '),
       fill: fill.join(' '),

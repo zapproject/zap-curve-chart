@@ -1,7 +1,6 @@
-import { LineOptions, ChartOptions } from './types';
+import { LineOptions, ChartOptions, CtxOptions } from './types';
 export declare class CurveSvgLineChart {
     private container;
-    private options;
     private svg;
     private polyline;
     private fill;
@@ -18,9 +17,10 @@ export declare class CurveSvgLineChart {
     private textColor;
     private textBackground;
     private lineOptions;
-    private shadowRadius;
+    private ctxOptions;
+    private options;
     private black;
-    constructor(container: HTMLElement, options?: ChartOptions, lineOptions?: LineOptions);
+    constructor(container: HTMLElement, options?: ChartOptions, lineOptions?: LineOptions, ctxOptions?: CtxOptions);
     draw(curves: any, dotsIssued: number): void;
     destroy(): void;
     private onMouseMove;
