@@ -57,7 +57,7 @@ export class CurveSvgLineChart {
     this.coef = 1;
     const { height, width } = this.options;
     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    this.svg.setAttributeNS(null, 'viewBox', `0 -${height / 2} ${width} ${height}`);
+    this.svg.setAttributeNS(null, "viewBox", `-10 -${height / 2 - 10} ${width} ${height}`);
     this.svg.setAttribute('width', width.toString());
     this.svg.setAttribute('height', height.toString());
 
@@ -123,7 +123,7 @@ export class CurveSvgLineChart {
     this.fill.setAttributeNS(null, 'points', data.fill);
     this.circle.setAttributeNS(null, 'cx', (data.currentPos.x > 3) ? data.currentPos.x : 3);
     this.circle.setAttributeNS(null, 'cy', data.currentPos.y);
-    this.coef = data.curve.max / this.options.width;
+    this.coef = data.curve.max / this.polyline.getBoundingClientRect().width;
     this.curve = data.curve;
   }
 
@@ -138,19 +138,31 @@ export class CurveSvgLineChart {
     this.textM.style.visibility = 'visible';
     this.infoText.style.visibility = 'visible';
     const rect = this.polyline.getBoundingClientRect();
-    const deltaX = ((e.clientX - rect.left) > (rect.width / 2)) ? (e.clientX - rect.left) - 120 : (e.clientX - rect.left) + 15;
+    let deltaX = ((e.clientX - rect.left) > (rect.width / 2)) ? (e.clientX - rect.left) - 120 : (e.clientX - rect.left) + 15;
     const deltaY = ((e.clientY - rect.top) > (rect.height / 2)) ? (e.clientY - rect.top) - 35 : (e.clientY - rect.top) + 15;
 
     const dots = Math.round((e.clientX - this.polyline.getBoundingClientRect().left) * this.coef);
-    let price = this.curve.getPrice(dots || 1);
-    if (price > 1e10) price = price / 1e18;
+    let price = (dots) ? this.curve.getPrice(dots) : 0;
+
+    if (
+      price >= 1e7 && price <= 1e15 && (e.clientX - rect.left) > (rect.width / 2)
+      || dots >= 1e7 && dots <= 1e15 && (e.clientX - rect.left) > (rect.width / 2)
+    ) {
+      deltaX -= 35;
+    }
+
+    let priceSuffix = '';
+    if (price > 1e10) {
+      price = price / 1e18;
+      priceSuffix = 'e-18';
+    }
 
     this.textM.setAttributeNS(null, 'x', deltaX.toString());
     this.textM.setAttributeNS(null, 'y', deltaY.toString()) ;
     this.textMDots.setAttributeNS(null, 'x', deltaX.toString());
     this.textMPrice.setAttributeNS(null, 'x', deltaX.toString());
     this.textMDots.textContent = `Dot: ${dots}`;
-    this.textMPrice.textContent = `Price: ${price}`;
+    this.textMPrice.textContent = `Price: ${price}${priceSuffix}`;
     const _rect = this.textM.getBoundingClientRect();
     this.infoText.setAttributeNS(null, 'x', (deltaX - 5).toString());
     this.infoText.setAttributeNS(null, 'y', (deltaY - 5).toString());
@@ -196,9 +208,9 @@ export class CurveSvgLineChart {
     const curve = new Curve(curveParams);
     const reduced = reduce(curve.max, this.options.maxDots);
     let maxY = 0;
-    let current = 1;
+    let current = 0;
     reduced.forEach((item, i, arr) => {
-      if(!!arr[i - 1] && arr[i - 1] < dotsIssued && item >= dotsIssued) {
+      if(dotsIssued && !current && item >= dotsIssued) {
         current = item;
       }
       const tmp = curve.getPrice(item);
@@ -210,9 +222,9 @@ export class CurveSvgLineChart {
     const coefX = this.options.maxDots / curve.max;
     const currentPos = {
       x: current * coefX,
-      y: height - (curve.getPrice(current) / coefY)
+      y: height - ((current) ? curve.getPrice(current) / coefY : 0)
     };
-    const polyline = [];
+    const polyline = [`0,${maxY/coefY}`];
     const fill = [`0,${maxY/coefY}`];
     reduced.forEach(x => {
       polyline.push(`${x * coefX},${height - (curve.getPrice(x) / coefY)}`);
