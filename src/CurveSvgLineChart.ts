@@ -57,7 +57,7 @@ export class CurveSvgLineChart {
     this.coef = 1;
     const { height, width } = this.options;
     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    this.svg.setAttributeNS(null, "viewBox", `-10 -${height / 2 - 10} ${width} ${height}`);
+    this.svg.setAttributeNS(null, "viewBox", `0 -${height / 2} ${width} ${height}`);
     this.svg.setAttribute('width', width.toString());
     this.svg.setAttribute('height', height.toString());
 
@@ -219,18 +219,18 @@ export class CurveSvgLineChart {
       }
     });
     const coefY = maxY / height;
-    const coefX = this.options.maxDots / curve.max;
+    const coefX = this.options.width / curve.max;
     const currentPos = {
       x: current * coefX,
       y: height - ((current) ? curve.getPrice(current) / coefY : 0)
     };
-    const polyline = [`0,${maxY/coefY}`];
-    const fill = [`0,${maxY/coefY}`];
+    const polyline = [];
+    const fill = [`${reduced[0] * coefX},${height}`];
     reduced.forEach(x => {
       polyline.push(`${x * coefX},${height - (curve.getPrice(x) / coefY)}`);
       fill.push(`${x * coefX},${height - (curve.getPrice(x) / coefY)}`);
     });
-    fill.push(`${this.options.maxDots},${maxY/coefY}`)
+    fill.push(`${this.options.width},${maxY/coefY}`)
     return {
       polyline: polyline.join(' '),
       fill: fill.join(' '),
