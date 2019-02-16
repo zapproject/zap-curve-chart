@@ -1,5 +1,5 @@
 import './curve-doughnut-chart.css';
-import { ChartOptions } from './ChartOptions';
+import { ChartOptions } from './types';
 export declare class CurveDoughnutChart {
     private chart;
     private chartDatasets;

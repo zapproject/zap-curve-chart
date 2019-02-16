@@ -1,33 +1,7 @@
 import * as Chart from 'chart.js';
 import { Curve } from '@zapjs/curve';
-import { ChartOptions } from './ChartOptions';
 import { reduce } from './utils';
-
-interface CtxOptions {
-  shadowColor?: string;
-  shadowBlur?: number;
-  shadowRadius?: number;
-  shadowOffsetX?: number;
-  shadowOffsetY?: number;
-}
-
-interface LineOptions {
-  fill?: boolean;
-  fillOpacity?: number;
-  pointStyle?: string;
-  borderColor?: string;
-  backgroundColor?: string;
-  lineTension?: number;
-  borderWidth?: number;
-  pointRadius?: number;
-  pointBorderWidth?: number;
-  pointBackgroundColor?: string;
-  pointBorderColor?: string;
-  currentPointRadius?: number;
-  currentPointBorderWidth?: number;
-  currentPointBackgroundColor?: string;
-  currentPointBorderColor?: string;
-}
+import { CtxOptions, LineOptions, ChartOptions } from './types';
 
 export class CurveLineChart {
 

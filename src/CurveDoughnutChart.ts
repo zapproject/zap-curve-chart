@@ -1,7 +1,7 @@
 import * as Chart from 'chart.js';
 import { Curve } from '@zapjs/curve';
 import './curve-doughnut-chart.css';
-import { ChartOptions } from './ChartOptions';
+import { ChartOptions } from './types';
 
 export class CurveDoughnutChart {
 
