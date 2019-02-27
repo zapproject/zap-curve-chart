@@ -8,6 +8,9 @@ module.exports = merge(common, {
   mode: 'production',
   entry: {
     'zap-curve-chart': [path.resolve(__dirname, './src/index.ts')],
+    'CurveSvgLineChart': [path.resolve(__dirname, './src/CurveSvgLineChart.ts')],
+    'CurveLineChart': [path.resolve(__dirname, './src/CurveLineChart.ts')],
+    'CurveDoughnutChart': [path.resolve(__dirname, './src/CurveDoughnutChart.ts')],
   },
   output: {
     filename: "[name].js",
@@ -17,15 +20,15 @@ module.exports = merge(common, {
   },
   externals: {
     'chart.js': {
-      commonjs: 'Chart',
-      commonjs2: 'Chart',
-      amd: 'Chart',
+      commonjs: 'chart.js',
+      commonjs2: 'chart.js',
+      amd: 'chart.js',
       root: 'Chart'
     },
     'bignumber.js': {
-      commonjs: 'BigNumber',
-      commonjs2: 'BigNumber',
-      amd: 'BigNumber',
+      commonjs: 'bignumber.js',
+      commonjs2: 'bignumber.js',
+      amd: 'bignumber.js',
       root: 'BigNumber'
     },
   },
