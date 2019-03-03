@@ -18,3 +18,9 @@ export function reduce(dots: number, maxCount: number): number[] {
 export function average(start, end): number {
   return Math.round((start + end) / 2);
 }
+
+export function formatPrice(wei: number): string {
+  if (wei >= 1e16) return Math.round(wei / 1e15) / 1e3 + ' ether';
+  if (wei >= 1e6) return Math.round(wei / 1e6) / 1e3 + ' gwei';
+  return wei + ' wei';
+}

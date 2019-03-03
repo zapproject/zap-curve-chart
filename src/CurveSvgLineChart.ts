@@ -1,6 +1,6 @@
 import { Curve } from '@zapjs/curve';
 import { LineOptions, ChartOptions, CtxOptions } from './types';
-import { reduce } from './utils';
+import { reduce, formatPrice } from './utils';
 
 
 export class CurveSvgLineChart {
@@ -54,7 +54,6 @@ export class CurveSvgLineChart {
     this.options = Object.assign(this.options, options);
     this.ctxOptions = Object.assign(this.ctxOptions, ctxOptions);
 
-    this.coef = 1;
     const { height, width } = this.options;
     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.svg.setAttributeNS(null, "viewBox", `0 -${height / 2} ${width} ${height}`);
@@ -123,7 +122,6 @@ export class CurveSvgLineChart {
     this.fill.setAttributeNS(null, 'points', data.fill);
     this.circle.setAttributeNS(null, 'cx', (data.currentPos.x > 3) ? data.currentPos.x : 3);
     this.circle.setAttributeNS(null, 'cy', data.currentPos.y);
-    this.coef = data.curve.max / this.polyline.getBoundingClientRect().width;
     this.curve = data.curve;
   }
 
@@ -140,8 +138,8 @@ export class CurveSvgLineChart {
     const rect = this.polyline.getBoundingClientRect();
     let deltaX = ((e.clientX - rect.left) > (rect.width / 2)) ? (e.clientX - rect.left) - 120 : (e.clientX - rect.left) + 15;
     const deltaY = ((e.clientY - rect.top) > (rect.height / 2)) ? (e.clientY - rect.top) - 35 : (e.clientY - rect.top) + 15;
-
-    const dots = Math.round((e.clientX - this.polyline.getBoundingClientRect().left) * this.coef);
+    const coef = this.curve.max / rect.width;
+    const dots = Math.round((e.clientX - rect.left) * coef);
     let price = (dots) ? this.curve.getPrice(dots) : 0;
 
     if (
@@ -151,18 +149,14 @@ export class CurveSvgLineChart {
       deltaX -= 35;
     }
 
-    let priceSuffix = '';
-    if (price > 1e10) {
-      price = price / 1e18;
-      priceSuffix = 'e-18';
-    }
+    const priceText = formatPrice(price);
 
     this.textM.setAttributeNS(null, 'x', deltaX.toString());
     this.textM.setAttributeNS(null, 'y', deltaY.toString()) ;
     this.textMDots.setAttributeNS(null, 'x', deltaX.toString());
     this.textMPrice.setAttributeNS(null, 'x', deltaX.toString());
     this.textMDots.textContent = `Dot: ${dots}`;
-    this.textMPrice.textContent = `Price: ${price}${priceSuffix}`;
+    this.textMPrice.textContent = `${priceText} ZAP`;
     const _rect = this.textM.getBoundingClientRect();
     this.infoText.setAttributeNS(null, 'x', (deltaX - 5).toString());
     this.infoText.setAttributeNS(null, 'y', (deltaY - 5).toString());
