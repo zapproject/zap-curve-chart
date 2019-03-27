@@ -18,21 +18,16 @@
   visibility: hidden;
   pointer-events: none;
 }
-.curve-doughnat__container_show-available svg,
-.curve-doughnat__container_show-issued svg {
-  z-index: 2;
-}
+
 .curve-doughnat__container_show-issued svg rect:nth-of-type(1),
 .curve-doughnat__container_show-issued svg rect:nth-of-type(2),
 .curve-doughnat__container_show-issued svg g:nth-of-type(1) {
   visibility: visible;
-  z-index: 2;
 }
 .curve-doughnat__container_show-available svg rect:nth-of-type(3),
 .curve-doughnat__container_show-available svg rect:nth-of-type(4),
 .curve-doughnat__container_show-available svg g:nth-of-type(2) {
   visibility: visible;
-  z-index: 2;
 }
 .curve-doughnat__bottom {
   display: flex;
