@@ -62,7 +62,6 @@ export class CurveDoughnutChartSvg {
     this.circleAvailable.setAttributeNS(null, 'fill', 'transparent');
     this.circleAvailable.setAttributeNS(null, 'stroke', '#e5e5e5');
     this.circleAvailable.setAttributeNS(null, 'stroke-width', '20');
-    this.circleAvailable.setAttributeNS(null, 'id', 'circle2');
     this.circleIssued = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     this.circleIssued.setAttributeNS(null, 'cx', '21');
     this.circleIssued.setAttributeNS(null, 'cy', '21');
