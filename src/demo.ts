@@ -1,6 +1,7 @@
 import { CurveLineChart } from "./CurveLineChart";
 import { CurveDoughnutChart } from "./CurveDoughnutChart";
 import { CurveSvgLineChart } from "./CurveSvgLineChart";
+import { CurveDoughnutChartSvg } from "./CurveDoughnutChartSvg";
 
 const container = document.getElementById('charts');
 
@@ -39,3 +40,6 @@ lineChart2.draw([2, 0, 1, 10, 3, 0, 0, 1, 20, 2, 0, 1, 50], 10);
 
 const doughnutChart = new CurveDoughnutChart(container);
 doughnutChart.draw([4,0,0,2,3,1000,3,0,0,2000000000000000000,2000], 1322, 20);
+
+const doughnutChartSvg = new CurveDoughnutChartSvg(container);
+doughnutChartSvg.drawSvg([4,0,0,2,3,1000,3,0,0,2000000000000000000,2000], 1322, 20);
