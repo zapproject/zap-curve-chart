@@ -224,8 +224,10 @@ export class CurveDoughnutChartSvg {
     const available = ((totalDots - issuedDots) / totalDots) * 82.12;
     const fi1 = issuedPercent2 / middleR / 2;
     const fi2 = (issuedPercent2 + available / 2) / middleR;
-    const y1 = 23.5 - middleR * Math.cos(fi1);
-    const y2 = 23.5 - middleR * Math.cos(fi2);
+    let y1 = 23.5 - middleR * Math.cos(fi1);
+    let y2 = 23.5 - middleR * Math.cos(fi2);
+    if(y1 > 17 && y1 < 30) y1 = 31;
+    if(y2 > 18 && y2 < 29) y2 = 31;
     this.getText('0', y1.toString(),"Issued dots:", issuedDots.toString(), 'rgba(0, 120, 254, 0.5)');
     this.getText('0', y2.toString(),"Available dots:", (totalDots - issuedDots).toString(), 'rgba(255, 255, 255, .7)');
     this.circleAvailable.setAttributeNS(null, 'stroke-dasharray', `${70 - issuedPercent - 0.25} ${issuedPercent + 0.25}`);
