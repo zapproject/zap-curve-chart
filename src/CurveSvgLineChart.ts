@@ -137,7 +137,7 @@ export class CurveSvgLineChart {
     this.infoText.style.visibility = 'visible';
     const rect = this.polyline.getBoundingClientRect();
     let deltaX = ((e.clientX - rect.left) > (rect.width / 2)) ? (e.clientX - rect.left) - 120 : (e.clientX - rect.left) + 15;
-    const deltaY = ((e.clientY - rect.top) > (rect.height / 2)) ? (e.clientY - rect.top) - 35 : (e.clientY - rect.top) + 15;
+    const deltaY = ((e.clientY - rect.top) > (rect.height / 2.5)) ? (e.clientY - rect.top) - 35 : (e.clientY - rect.top) + 15;
     const coef = this.curve.max / rect.width;
     const dots = Math.round((e.clientX - rect.left) * coef);
     let price = (dots) ? this.curve.getPrice(dots) : 0;
