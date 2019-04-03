@@ -11,6 +11,8 @@ module.exports = merge(common, {
     'CurveSvgLineChart': [path.resolve(__dirname, './src/CurveSvgLineChart.ts')],
     'CurveLineChart': [path.resolve(__dirname, './src/CurveLineChart.ts')],
     'CurveDoughnutChart': [path.resolve(__dirname, './src/CurveDoughnutChart.ts')],
+    'BondHistoryLineChart': [path.resolve(__dirname, './src/BondHistoryLineChart.ts')],
+    'BondHistorySvgLineChart': [path.resolve(__dirname, './src/BondHistorySvgLineChart.ts')],
   },
   output: {
     filename: "[name].js",

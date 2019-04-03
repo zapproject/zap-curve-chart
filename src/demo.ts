@@ -2,6 +2,8 @@ import { CurveLineChart } from "./CurveLineChart";
 import { CurveDoughnutChart } from "./CurveDoughnutChart";
 import { CurveSvgLineChart } from "./CurveSvgLineChart";
 import { CurveDoughnutChartSvg } from "./CurveDoughnutChartSvg";
+import { BondHistoryLineChart } from "./BondHistoryLineChart";
+import { BondHistorySvgLineChart } from "./BondHistorySvgLineChart";
 
 const container = document.getElementById('charts');
 
@@ -43,3 +45,8 @@ doughnutChart.draw([4,0,0,2,3,1000,3,0,0,2000000000000000000,2000], 1322, 20);
 
 const doughnutChartSvg = new CurveDoughnutChartSvg(container);
 doughnutChartSvg.drawSvg([4,0,0,2,3,1000,3,0,0,2000000000000000000,20000], 10000, 1020);
+
+const historyChart = new BondHistoryLineChart(container);
+const historySvgChart = new BondHistorySvgLineChart(container);
+historyChart.draw([1,2,3,4,5,7,99,1]);
+historySvgChart.draw([1,2,3,4,5,7,99,1]);

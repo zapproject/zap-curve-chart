@@ -138,9 +138,9 @@ export class CurveSvgLineChart {
     const rect = this.polyline.getBoundingClientRect();
     let deltaX = ((e.clientX - rect.left) > (rect.width / 2)) ? (e.clientX - rect.left) - 120 : (e.clientX - rect.left) + 15;
     const deltaY = ((e.clientY - rect.top) > (rect.height / 2.5)) ? (e.clientY - rect.top) - 35 : (e.clientY - rect.top) + 15;
-    const coef = this.curve.max / rect.width;
+    const coef = (this.curve.max - 1) / rect.width;
     const dots = Math.round((e.clientX - rect.left) * coef);
-    let price = (dots) ? this.curve.getPrice(dots) : 0;
+    let price = this.curve.getPrice(dots + 1);
 
     if (
       price >= 1e7 && price <= 1e15 && (e.clientX - rect.left) > (rect.width / 2)
@@ -155,7 +155,7 @@ export class CurveSvgLineChart {
     this.textM.setAttributeNS(null, 'y', deltaY.toString()) ;
     this.textMDots.setAttributeNS(null, 'x', deltaX.toString());
     this.textMPrice.setAttributeNS(null, 'x', deltaX.toString());
-    this.textMDots.textContent = `Dot: ${dots}`;
+    this.textMDots.textContent = `Dot: ${dots + 1}`;
     this.textMPrice.textContent = `${priceText} ZAP`;
     const _rect = this.textM.getBoundingClientRect();
     this.infoText.setAttributeNS(null, 'x', (deltaX - 5).toString());
@@ -213,7 +213,7 @@ export class CurveSvgLineChart {
       }
     });
     const coefY = maxY / height;
-    const coefX = this.options.width / curve.max;
+    const coefX = this.options.width / (curve.max - 1);
     const currentPos = {
       x: current * coefX,
       y: height - ((current) ? curve.getPrice(current) / coefY : 0)
@@ -221,8 +221,8 @@ export class CurveSvgLineChart {
     const polyline = [];
     const fill = [`${reduced[0] * coefX},${height}`];
     reduced.forEach(x => {
-      polyline.push(`${x * coefX},${height - (curve.getPrice(x) / coefY)}`);
-      fill.push(`${x * coefX},${height - (curve.getPrice(x) / coefY)}`);
+      polyline.push(`${(x -1) * coefX},${height - (curve.getPrice(x) / coefY)}`);
+      fill.push(`${(x -1) * coefX},${height - (curve.getPrice(x) / coefY)}`);
     });
     fill.push(`${this.options.width},${maxY/coefY}`)
     return {
