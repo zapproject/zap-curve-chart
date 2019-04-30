@@ -105,6 +105,19 @@ export class BondHistorySvgLineChart {
     this.svg.addEventListener('mouseout', this.onMouseOut);
   }
 
+  public updateWidth(width) {
+    this.svg.setAttribute('width', width.toString());
+    this.svg.setAttributeNS(null, "viewBox", `0 -${this.options.height / 2} ${width} ${this.options.height}`);
+    this.options.width = width;
+    this.options.maxDots = width;
+  }
+
+  public updateHeight(height) {
+    this.svg.setAttribute('width', height.toString());
+    this.svg.setAttributeNS(null, "viewBox", `0 -${height / 2} ${this.options.width} ${height}`);
+    this.options.width = height;
+  }
+
   draw(values: any, dots = this.options.maxDots) {
     const data = this.getDataset(values, dots);
     this.polyline.setAttributeNS(null, 'points', data.polyline);
