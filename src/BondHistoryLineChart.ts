@@ -57,6 +57,11 @@ export class BondHistoryLineChart {
     return reduce(values.length, this.maxDots).map(x => ({x, y: values[x - 1] / 1e18}));
   }
 
+  public updateWidth(width) {
+    this.canvas.style.width = width + 'px';
+    this.maxDots = width;
+  }
+
   public draw(values: number[] = []) {
     const dataset = this.getDataset(values);
     this.chartLabels = dataset.map(data => data.x);

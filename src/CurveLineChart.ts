@@ -58,6 +58,11 @@ export class CurveLineChart {
     const curve = new Curve(curveParams);
     return reduce(curve.max, this.maxDots).map(x => ({x, y: curve.getPrice(x) / 1e18}));
   }
+  public updateWidth(width) {
+    this.canvas.style.width = width + 'px';
+    this.maxDots = width;
+  }
+
 
   public draw(curveParams: number[] = [], issuedDots: number = 0) {
     const dataset = this.getDataset(curveParams);

@@ -50,3 +50,10 @@ const historyChart = new BondHistoryLineChart(container);
 const historySvgChart = new BondHistorySvgLineChart(container);
 historyChart.draw([1,2,3,4,5,7,99,1]);
 historySvgChart.draw([1,2,3,4,5,7,99,1]);
+
+
+
+window.addEventListener("resize", e => {
+  svgChart.updateWidth(container.offsetWidth);
+  svgChart.draw([1, 6e18, 1000000000, 1, 3e18, 2000000000], 990000000);
+});
